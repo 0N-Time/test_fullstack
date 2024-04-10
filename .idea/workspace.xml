@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1393ced4-253c-45c8-8179-e5cbb5e36f1d" name="Changes" comment="add frontend">
-      <change afterPath="$PROJECT_DIR$/.github/workflows/github-ci.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/workflows/sonar-backend.yml" afterDir="false" />
+    <list default="true" id="1393ced4-253c-45c8-8179-e5cbb5e36f1d" name="Changes" comment="add workflows">
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +44,7 @@
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "settings.editor.selected.configurable": "Errors",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -66,7 +66,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1712736937470</updated>
-      <workItem from="1712736941726" duration="1228000" />
+      <workItem from="1712736941726" duration="1464000" />
     </task>
     <task id="LOCAL-00001" summary="add backend">
       <option name="closed" value="true" />
@@ -84,7 +84,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712738045908</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="add workflows">
+      <option name="closed" value="true" />
+      <created>1712738248742</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1712738248742</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -96,6 +104,7 @@
     </ignored-roots>
     <MESSAGE value="add backend" />
     <MESSAGE value="add frontend" />
-    <option name="LAST_COMMIT_MESSAGE" value="add frontend" />
+    <MESSAGE value="add workflows" />
+    <option name="LAST_COMMIT_MESSAGE" value="add workflows" />
   </component>
 </project>
