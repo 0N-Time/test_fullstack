@@ -18,8 +18,9 @@ jobs:
       - name: Frontend bauen
         working-directory: frontend
         run: |
-          npm config set registry https://registry.npmjs.org/
           npm install
+          npm config delete proxy
+          npm config delete https-proxy
           npm run build
 
       - uses: actions/upload-artifact@v4
