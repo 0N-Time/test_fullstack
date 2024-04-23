@@ -19,7 +19,6 @@ jobs:
         working-directory: frontend
         run: |
           npm config set https-proxy null
-          npm config set http-proxy null
           npm install
           npm run build
 
