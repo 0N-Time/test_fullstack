@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  https_proxy: http://<proxy-host>:<proxy-port>
+  http_proxy: http://<proxy-host>:<proxy-port>
+
 jobs:
   frontend-bauen:
     runs-on: ubuntu-latest
@@ -19,7 +23,6 @@ jobs:
         working-directory: frontend
         run: |
           npm cache clean --force
-          npm config set https-proxy null
           npm install
           npm run build
 
