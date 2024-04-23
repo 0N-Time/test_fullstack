@@ -18,6 +18,7 @@ jobs:
       - name: Frontend bauen
         working-directory: frontend
         run: |
+          npm cache clean --force
           npm config set https-proxy null
           npm install
           npm run build
