@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  https_proxy: http://stealth-service:65432
-  http_proxy: http://stealth-service:65432
+  https_proxy: 212.62.95.45:1080
+  http_proxy: 212.62.95.45:1080
 
 jobs:
   frontend-bauen:
