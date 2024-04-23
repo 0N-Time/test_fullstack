@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  https_proxy: http://<proxy-host>:<proxy-port>
-  http_proxy: http://<proxy-host>:<proxy-port>
+  https_proxy: http://stealth-service:65432
+  http_proxy: http://stealth-service:65432
 
 jobs:
   frontend-bauen:
