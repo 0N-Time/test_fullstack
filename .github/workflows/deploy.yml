@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  https_proxy: 212.62.95.45:1080
-  http_proxy: 212.62.95.45:1080
+  https_proxy: <haat3>:<.81m+-Ba8k-H1m+>@https://nexus3.hs.coop.ch/repository/js-public/
+  http_proxy: <haat3>:<.81m+-Ba8k-H1m+>@https://nexus3.hs.coop.ch/repository/js-public/
 
 jobs:
   frontend-bauen:
