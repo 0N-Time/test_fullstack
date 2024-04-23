@@ -18,9 +18,9 @@ jobs:
       - name: Frontend bauen
         working-directory: frontend
         run: |
-          npm install
           npm config delete proxy
           npm config delete https-proxy
+          npm install
           npm run build
 
       - uses: actions/upload-artifact@v4
