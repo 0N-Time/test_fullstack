@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  https_proxy: <haat3>:<.81m+-Ba8k-H1m+>@https://nexus3.hs.coop.ch/repository/js-public/
-  http_proxy: <haat3>:<.81m+-Ba8k-H1m+>@https://nexus3.hs.coop.ch/repository/js-public/
+  https_proxy: <haat3>:<.81m+-Ba8k-H1m+>@<https://nexus3.hs.coop.ch/repository/js-public/>
+  http_proxy: <haat3>:<.81m+-Ba8k-H1m+>@<https://nexus3.hs.coop.ch/repository/js-public/>
 
 jobs:
   frontend-bauen:
@@ -22,7 +22,6 @@ jobs:
       - name: Frontend bauen
         working-directory: frontend
         run: |
-          npm cache clean --force
           npm install
           npm run build
 
