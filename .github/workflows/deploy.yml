@@ -18,8 +18,8 @@ jobs:
       - name: Frontend bauen
         working-directory: frontend
         run: |
-          npm config delete proxy
-          npm config delete https-proxy
+          npm config set https-proxy null
+          npm config set http-proxy null
           npm install
           npm run build
 
