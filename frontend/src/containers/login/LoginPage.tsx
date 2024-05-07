@@ -25,7 +25,7 @@ function LoginPage() {
 
         const data = await response.json();
         localStorage.setItem("jwt", data.token);
-        navigate("/");
+        navigate("/user-home");
     };
 
     return <div className="login-page">

@@ -2,14 +2,15 @@ package com.example.backend.service;
 
 import com.example.backend.controller.UpdateUserRequest;
 import com.example.backend.model.dao.Account;
-import com.example.backend.model.dao.BadRequestException;
-import com.example.backend.model.dao.NotFoundException;
+import com.example.backend.Exception.NotFoundException;
 import com.example.backend.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,23 @@ public class AccountService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final Predicate<String> stringCheck = (stringVal) -> stringVal != null && !stringVal.isBlank();
+
+    public ResponseEntity<String> getAccountName(String username) {
+        Optional<Account> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get().getName());
+        }
+        throw new NotFoundException("User not found");
+    }
+
+    public ResponseEntity<Long> getAccountMedals(String username) {
+        Optional<Account> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get().getMedals());
+        }
+        throw new NotFoundException("User not found");
+    }
 
     public Integer getUserIdByUsername(String username) {
         return userRepository.findByUsername(username).map(Account::getId).orElseThrow(() -> new NotFoundException("User not found"));
@@ -26,29 +43,21 @@ public class AccountService {
     public Account updateUser(Integer id, UpdateUserRequest request) {
         Account user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (request.getUsername() != null) {
-            if (userRepository.existsByUsername(request.getUsername())) {
-                throw new BadRequestException("Username already exists");
+        if (stringCheck.test(request.getUsername())) {
+            if (!userRepository.existsByUsername(request.getUsername())) {
+                user.setUsername(request.getUsername());
             }
-            user.setUsername(request.getUsername());
         }
 
-        if (request.getPassword() != null) {
+        if (stringCheck.test(request.getPassword())) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        if (request.getName() != null) {
-            if (userRepository.existsByName(request.getName())) {
-                throw new BadRequestException("Name already exists");
-            }
+        if (stringCheck.test(request.getName())) {
             user.setName(request.getName());
         }
 
         return userRepository.save(user);
-    }
-
-    public String getUsernameFromToken(String token) {
-        return jwtService.extractUsername(token);
     }
 
     public Optional<Account> findByUsername(String username) {

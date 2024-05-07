@@ -1,4 +1,4 @@
-package com.example.backend.model.dao;
+package com.example.backend.Exception;
 
 public class BadRequestException extends RuntimeException {
 

@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 
 import com.example.backend.model.dao.Account;
+import com.example.backend.model.dto.Token;
 import com.example.backend.service.JwtService;
 import com.example.backend.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -17,25 +18,30 @@ public class AccountController {
     private final AccountService accountService;
     private final JwtService jwtService;
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization") String authorizationHeader) {
+    @GetMapping("/get-name")
+    public ResponseEntity<?> getUserName(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(7);
         String username = jwtService.extractUsername(token);
-        Account user = accountService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return accountService.getAccountName(username);
+    }
 
-        jwtService.removeToken(token);
-
-        return ResponseEntity.ok().build();
+    @GetMapping("/get-medals")
+    public ResponseEntity<?> getMedals(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        return accountService.getAccountMedals(username);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Account> updateUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<Token> updateUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody UpdateUserRequest request) {
         String token = authorizationHeader.substring(7);
         String username = jwtService.extractUsername(token);
         Integer userId = accountService.getUserIdByUsername(username);
         Account user = accountService.updateUser(userId, request);
-        return ResponseEntity.ok(user);
+
+        String jwt = jwtService.generateToken(user);
+
+        return ResponseEntity.ok(new Token(jwt));
     }
 
     @DeleteMapping("/delete-user")

@@ -1,0 +1,12 @@
+.html {
+    background-color: red;
+}
+
+.bouncing-logo {
+    background-image: url('src/assets/CoopLogo.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50%;
+    position: absolute;
+    animation: bounce 10s infinite;
+}
