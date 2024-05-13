@@ -1,50 +1,72 @@
 package com.example.backend.service;
 
-import com.example.backend.model.GameRoom;
+import com.example.backend.Exception.InvalidGameException;
+import com.example.backend.Exception.InvalidParamException;
+import com.example.backend.Exception.NotFoundException;
+import com.example.backend.model.GameLoop;
 import com.example.backend.model.dao.Account;
 import com.example.backend.model.dao.Game;
-import com.example.backend.Exception.NotFoundException;
+import com.example.backend.model.dao.GameStatus;
 import com.example.backend.model.repository.GameRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final GameRoomService gameRoomService;
 
-    public Game createGame(Account playerOne) {
-        Game game = Game.builder()
-                .playerOne(playerOne)
-                .isOver(false)
-                .waitingForPlayer(true)
-                .gameBoard("000000000")
-                .build();
-        GameRoom gameRoom = GameRoom.builder()
-                .game(game)
-                .build();
-        gameRoomService.addGameRoomToSet(gameRoom);
-        return gameRepository.save(game);
+    public Game createGame(Account account) {
+        Game game = new Game();
+        game.setGameBoard("000000000");
+        game.setPlayerOne(account);
+        game.setStatus(GameStatus.NEW);
+        gameRepository.save(game);
+        return game;
     }
-/*
-    public Game joinGame(Account playerTwo, Long gameId) {
-        Optional<Game> game = gameRepository.findById(gameId);
-        if (game.isPresent()) {
-            game.get().setPlayerTwo(playerTwo);
-            game.get().setWaitingForPlayer(false);
-            game.get().setCurrentPlayer(
-                    ((int) (Math.random() * 2) + 1)
-            );
-            return game.get();
-        } else {
-            throw new NotFoundException("Game cannot be found");
+
+    public Game connectToGame(Account account, Long gameId) throws InvalidParamException, InvalidGameException {
+        if (!gameRepository.findById(gameId).isPresent()) {
+            throw new InvalidParamException("Game with provided id doesn't exist");
         }
+        Game game = gameRepository.findById(gameId).get();
+
+        if (game.getPlayerOne() != null) {
+            throw new InvalidGameException("Game is not valid anymore");
+        }
+
+        game.setPlayerOne(account);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+        return game;
     }
-*/
+
+    public Game connectToRandomGame(Account account) {
+        Game game = gameRepository
+                .findAll()
+                .stream()
+                .filter(it -> it.getStatus().equals(GameStatus.NEW))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Game not found"));
+        game.setPlayerOne(account);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+        return game;
+    }
+
+    public Game gameLoop(GameLoop gameLoop) {
+        if (!gameRepository. )
+    }
+
+    public Game findById(Long gameId) {
+        return gameRepository.findById(gameId).orElseThrow();
+    }
+
+
     public Integer[][] getGameBoard(Long id) {
         Optional<Game> game = gameRepository.findById(id);
         Integer[][] gameBoard = null;
