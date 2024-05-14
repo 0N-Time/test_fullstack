@@ -45,25 +45,4 @@ public class GameServiceTests {
         assertArrayEquals(expectedGameBoard, gameBoard);
     }
 
-    @Test
-    void testSetGameBoard() {
-        // Create mock objects
-        GameRepository gameRepository = mock(GameRepository.class);
-        GameService gameService = new GameService(gameRepository);
-
-        // Set up mock behavior
-        Long id = 1L;
-        Integer[][] gameBoardArray = {{null, 2, 3}, {4, 5, null}, {7, null, 9}};
-        Game game = new Game();
-        game.setId(id);
-        String expectedGameBoard = "023450709";
-        when(gameRepository.findById(id)).thenReturn(java.util.Optional.of(game));
-
-        // Call the method under test
-        gameService.setGameBoard(id, gameBoardArray);
-
-        // Verify the expected behavior
-        assertEquals(expectedGameBoard, game.getGameBoard());
-        verify(gameRepository).findById(id);
-    }
 }

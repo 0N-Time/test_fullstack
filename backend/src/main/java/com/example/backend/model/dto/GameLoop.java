@@ -1,4 +1,4 @@
-package com.example.backend.model;
+package com.example.backend.model.dto;
 
 import com.example.backend.model.dao.TicTacToe;
 import lombok.Data;
