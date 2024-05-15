@@ -37,7 +37,7 @@ public class GameService {
         if (game.getStatus().equals(GameStatus.IN_PROGRESS)) {
             throw new InvalidGameException("Game is already in progress");
         }
-        game.setPlayerOne(account);
+        game.setPlayerTwo(account);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
         return game;

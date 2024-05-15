@@ -31,7 +31,6 @@ public class GameController {
     public ResponseEntity<Game> start(@RequestHeader("Authorization") String authorizationHeader) {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.createGame(account);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), game);
         return ResponseEntity.ok(game);
     }
 
@@ -39,7 +38,6 @@ public class GameController {
     public ResponseEntity<Game> connect(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Long gameId) throws InvalidParamException, InvalidGameException {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.connectToGame(account, gameId);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), game);
         return ResponseEntity.ok(game);
     }
 
@@ -47,16 +45,13 @@ public class GameController {
     public ResponseEntity<Game> connectRandom(@RequestHeader("Authorization") String authorizationHeader) {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.connectToRandomGame(account);
-        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), game);
         return ResponseEntity.ok(game);
     }
 
     @RequestMapping(value = "/game-progress/{gameId}", method = {RequestMethod.POST})
     public Game gameLoop(@DestinationVariable Long gameId, @RequestBody GameLoop gameLoop) throws InvalidGameException {
         Game game = gameService.gameLoop(gameLoop);
-        if (gameLoop.getType() != null) {
-            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getId(), game);
-        }
+
         return game;
     }
 
