@@ -1,75 +1,129 @@
-import {useState} from "react";
+import React, { useState, useEffect } from "react";
+import { Client } from "@stomp/stompjs";
 
-
-interface GameState {
-    game: any;
+type Move = {
+    coordinateX: number
+    coordinateY: number
 }
 
-    const TicTacToe = () => {
-    const [message, setMessage] = useState<string>('');
-    const [gameState, setGameState] = useState<GameState>({
-        game: null
+type Game = {
+    id: number
+    status: "NEW" | "IN_PROGRESS" | "FINISHED"
+    gameBoard: string
+    winner: "X" | "O" | undefined
+    turn: boolean | undefined
+}
+
+const TicTacToe = () => {
+    const [game, setGame] = useState<Game>({gameBoard: "000000000", id: 0, status: "NEW", winner: undefined , turn: undefined});
+    const client = new Client({
+        brokerURL: "ws://localhost:8080/ws",
+        debug: function (str: string) {
+            console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
     });
 
-        const socket = new WebSocket('ws://localhost:8080/game-progress');
-
-        socket.onopen = () => {
-            console.log('WebSocket connection established.');
+    useEffect(() => {
+        client.activate();
+        client.onConnect = () => {
+            console.log("Connected to WebSocket Server");
+            consumeGameUpdates();
         };
-
-        socket.onmessage = (event) => {
-            console.log('Received message:', event.data);
+        client.onDisconnect = () => {
+            console.log("Disconnected from WebSocket Server");
         };
-
-        socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
+        return () => {
+            client.deactivate();
         };
+    }, []);
 
-        socket.onclose = () => {
-            console.log('WebSocket connection closed.');
-        };
-
-
-    const sendMessage = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        let msg =  formData.get("message");
-        console.log(msg);
-        socket.send(message);
+
+        const response = await fetch("/api/games/create-game", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+        setGame(data);
+        consumeGameUpdates()
     };
 
+    const consumeGameUpdates = () => {
+        client.subscribe("/topic/game/" + game.id, (message) => {
+            const gameBoard: string = JSON.parse(message.body);
+            setGame({...game, gameBoard: gameBoard});
+        });
+    };
 
+    const handleCellClick = (coordinateX: number, coordinateY: number) => {
+        if (game.status === "FINISHED") {
+            return;
+        }
+        const move: Move = {
+            coordinateX,
+            coordinateY,
+        };
+        fetch()
+    };
 
-    return (
-        <div>
-            <h1>Tic-Tac-Toe</h1>
-
-                <>
-                    <form onSubmit={sendMessage}>
-                        <label>Test</label>
-                        <input type="text" name="message"/>
-                        <button type="submit">Send</button>
-                    </form>
-                </>
-
-            {gameState.game?.id && (
-                <>
-                    <h2>Tic-Tac-Toe Game {gameState.game?.id}</h2>
-                    <table>
-                        <tbody>
-                        {gameState.game?.gameBoard.split('').map((cell: string, index: number) => (
-                            <td key={index}>
-                                {cell === '0' ? '' : (
-                                    cell === '1' ? 'X' : 'O'
-                                )}
+    const renderBoard = (gameRoom: Game) => {
+        return (
+            <table id="board" className="table table-bordered">
+                <tbody>
+                {gameRoom.board.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                        {row.map((cell, colIndex) => (
+                            <td key={colIndex} onClick={() => handleCellClick(rowIndex, colIndex)}>
+                                {cell}
                             </td>
                         ))}
-                        </tbody>
-                    </table>
-                </>
-            )}
-        </div>
-    );
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        );
+    };
+
+    const renderGameOver = (gameRoom: Game) => {
+        if (!gameRoom.winner) {
+            return null;
+        }
+        return (
+            <div className="alert alert-info">
+                {gameRoom.winner === "X" ? "Player X" : "Player O"} wins!
+            </div>
+        );
+    };
+
+    const render = () => {
+        if (!gameRoomId) {
+            return (
+                <div>
+                    <button onClick={handleNewGame} className="btn btn-primary">
+                        New Game
+                    </button>
+                </div>
+            );
+        }
+        if (!gameRoom) {
+            return <div>Loading...</div>;
+        }
+        return (
+            <>
+                {renderBoard(gameRoom)}
+                {renderGameOver(gameRoom)}
+            </>
+        );
+    };
+
+    return <div>{render()}</div>;
 };
 
 export default TicTacToe;

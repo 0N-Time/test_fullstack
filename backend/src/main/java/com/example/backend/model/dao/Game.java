@@ -19,6 +19,7 @@ public class Game {
     private GameStatus status;
     private String gameBoard;
     private TicTacToe winner;
+    private boolean turn;
 
 
     @OneToOne

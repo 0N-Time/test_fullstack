@@ -6,6 +6,8 @@ import com.example.backend.Exception.NotFoundException;
 import com.example.backend.model.dto.GameLoop;
 import com.example.backend.model.dao.Account;
 import com.example.backend.model.dao.Game;
+import com.example.backend.model.dto.GameResponse;
+import com.example.backend.model.dto.Move;
 import com.example.backend.service.AccountService;
 import com.example.backend.service.GameService;
 import com.example.backend.service.JwtService;
@@ -28,10 +30,11 @@ public class GameController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping("/create-game")
-    public ResponseEntity<Game> start(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<GameResponse> start(@RequestHeader("Authorization") String authorizationHeader) {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.createGame(account);
-        return ResponseEntity.ok(game);
+        game.setTurn(Math.random() > 0.5);
+        return ResponseEntity.ok(new GameResponse(game));
     }
 
     @PostMapping("/connect")
@@ -48,11 +51,10 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 
-    @RequestMapping(value = "/game-progress/{gameId}", method = {RequestMethod.POST})
-    public Game gameLoop(@DestinationVariable Long gameId, @RequestBody GameLoop gameLoop) throws InvalidGameException {
-        Game game = gameService.gameLoop(gameLoop);
-
-        return game;
+    @PostMapping("/gameLoop")
+    public void gameLoop(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Move move) {
+        Account account = getAccountFromToken(authorizationHeader);
+        Game game = gameService.findByUser(account);
     }
 
     private Account getAccountFromToken(String authorizationHeader) {

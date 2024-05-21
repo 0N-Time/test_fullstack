@@ -106,6 +106,13 @@ public class GameService {
         return false;
     }
 
+    public Game findByUser(Account account) {
+         return gameRepository.findAll().stream()
+                 .filter(game -> game.getPlayerOne().equals(account) || game.getPlayerTwo().equals(account))
+                 .toList()
+                 .getFirst();
+    }
+
     public Game findById(Long gameId) {
         return gameRepository.findById(gameId).orElseThrow();
     }
