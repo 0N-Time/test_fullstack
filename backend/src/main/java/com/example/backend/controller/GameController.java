@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.Exception.InvalidGameException;
 import com.example.backend.Exception.InvalidParamException;
 import com.example.backend.Exception.NotFoundException;
+import com.example.backend.model.dao.TicTacToe;
 import com.example.backend.model.dto.GameLoop;
 import com.example.backend.model.dao.Account;
 import com.example.backend.model.dao.Game;
@@ -27,34 +28,38 @@ public class GameController {
     private final GameService gameService;
     private final JwtService jwtService;
     private final AccountService accountService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping("/create-game")
     public ResponseEntity<GameResponse> start(@RequestHeader("Authorization") String authorizationHeader) {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.createGame(account);
-        game.setTurn(Math.random() > 0.5);
         return ResponseEntity.ok(new GameResponse(game));
     }
 
-    @PostMapping("/connect")
-    public ResponseEntity<Game> connect(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Long gameId) throws InvalidParamException, InvalidGameException {
+    @PostMapping("/connect/{id}")
+    public ResponseEntity<Game> connect(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id) throws InvalidParamException, InvalidGameException {
         Account account = getAccountFromToken(authorizationHeader);
-        Game game = gameService.connectToGame(account, gameId);
+        Game game = gameService.connectToGame(account, id);
         return ResponseEntity.ok(game);
     }
 
     @PostMapping("/connect/random")
-    public ResponseEntity<Game> connectRandom(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<GameResponse> connectRandom(@RequestHeader("Authorization") String authorizationHeader) {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.connectToRandomGame(account);
-        return ResponseEntity.ok(game);
+        return ResponseEntity.ok(new GameResponse(game));
     }
 
     @PostMapping("/gameLoop")
-    public void gameLoop(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Move move) {
+    public void gameLoop(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Move move) throws InvalidGameException {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.findByUser(account);
+
+        if (game.getPlayerOne() == account) {
+            gameService.gameLoop(new GameLoop(TicTacToe.X, move.getCoordinateX(), move.getCoordinateY(), game.getId()));
+        } else if (game.getPlayerTwo() == account) {
+            gameService.gameLoop(new GameLoop(TicTacToe.O, move.getCoordinateX(), move.getCoordinateY(), game.getId()));
+        }
     }
 
     private Account getAccountFromToken(String authorizationHeader) {

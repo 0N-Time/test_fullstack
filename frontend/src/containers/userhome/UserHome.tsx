@@ -7,13 +7,16 @@ function UserHome() {
     const [name, setName] = useState("");
     const [medals, setMedals] = useState("");
 
-    const handleChangeSettings = () => {
+    const handleButtonSettings = () => {
         navigate("/user-home/settings")
     }
-    const handleLogout = () => {
+    const handleButtonLogout = () => {
         logout();
         navigate("/login");
     };
+    const handleButtonTicTacToe = () => {
+        navigate("/user-home/tic-tac-toe")
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,8 +50,9 @@ function UserHome() {
         <div>
             <h1>Welcome, {name}</h1>
             <span>Medals: {medals}</span>
-            <button onClick={handleChangeSettings}>Settings</button>
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleButtonTicTacToe}>TicTacToe</button>
+            <button onClick={handleButtonSettings}>Settings</button>
+            <button onClick={handleButtonLogout}>Logout</button>
         </div>
     );
 }

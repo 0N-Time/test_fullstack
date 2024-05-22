@@ -31,7 +31,7 @@ const BouncingLogo: React.FC = () => {
                 }
                 logo.style.left = `${newLeft}px`;
                 logo.style.top = `${newTop}px`;
-            }, 20);
+            }, 18);
             return () => clearInterval(interval);
         }
     }, []);

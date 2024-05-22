@@ -8,8 +8,11 @@ import com.example.backend.model.dao.Account;
 import com.example.backend.model.dao.Game;
 import com.example.backend.model.dao.GameStatus;
 import com.example.backend.model.dao.TicTacToe;
+import com.example.backend.model.dto.GameResponse;
 import com.example.backend.model.repository.GameRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,11 +23,19 @@ public class GameService {
 
     private final GameRepository gameRepository;
 
+    @Autowired
+    private final SimpMessagingTemplate messagingTemplate;
+
     public Game createGame(Account account) {
         Game game = new Game();
         game.setGameBoard("000000000");
         game.setPlayerOne(account);
         game.setStatus(GameStatus.NEW);
+        if (Math.random() < 0.5) {
+            game.setCurrentPlayerTurn(TicTacToe.X);
+        } else {
+            game.setCurrentPlayerTurn(TicTacToe.O);
+        }
         gameRepository.save(game);
         return game;
     }
@@ -56,13 +67,21 @@ public class GameService {
         return game;
     }
 
-    public Game gameLoop(GameLoop gameLoop) throws InvalidGameException {
+    public void gameLoop(GameLoop gameLoop) throws InvalidGameException {
         Game game = gameRepository.findById(gameLoop.getGameId()).orElseThrow(() -> new NotFoundException("Game not found"));
+
+        if (game.getCurrentPlayerTurn() != gameLoop.getType()) {
+            throw new InvalidGameException("Not your turn");
+        }
+
         if (!game.getStatus().equals(GameStatus.IN_PROGRESS)) {
             throw new InvalidGameException("Game is not in progress");
         }
 
         Integer[][] gameBoard = getGameBoard(gameLoop.getGameId());
+        if (gameBoard[gameLoop.getCoordinateX()][gameLoop.getCoordinateY()] == 1 || gameBoard[gameLoop.getCoordinateX()][gameLoop.getCoordinateY()] == 2) {
+            throw new InvalidGameException("Invalid Input");
+        }
         gameBoard[gameLoop.getCoordinateX()][gameLoop.getCoordinateY()] = gameLoop.getType().getValue();
 
         Boolean xWinner = checkWinner(gameBoard, TicTacToe.X);
@@ -76,9 +95,15 @@ public class GameService {
             game.setStatus(GameStatus.FINISHED);
         }
 
+        if (game.getCurrentPlayerTurn() == TicTacToe.X) {
+            game.setCurrentPlayerTurn(TicTacToe.O);
+        } else {
+            game.setCurrentPlayerTurn(TicTacToe.X);
+        }
+
         game.setGameBoard(transGameBoardToString(gameBoard));
         gameRepository.save(game);
-        return game;
+        messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
     }
 
     private Boolean checkWinner(Integer[][] gameBoard, TicTacToe ticTacToe) {
