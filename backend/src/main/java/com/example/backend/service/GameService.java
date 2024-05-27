@@ -42,8 +42,11 @@ public class GameService {
 
     public Game connectToGame(Account account, Long gameId) throws InvalidParamException, InvalidGameException {
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new InvalidParamException("Game with provided id doesn't exist"));
-        if (game.getPlayerOne() != null) {
-            throw new InvalidGameException("Game is not valid anymore");
+        if (game.getPlayerOne() == null) {
+            throw new InvalidGameException("PlayerOne is not present");
+        }
+        if (game.getPlayerTwo() != null) {
+            throw new InvalidGameException("PlayerTwo already exists");
         }
         if (game.getStatus().equals(GameStatus.IN_PROGRESS)) {
             throw new InvalidGameException("Game is already in progress");
@@ -51,6 +54,7 @@ public class GameService {
         game.setPlayerTwo(account);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
+        messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
         return game;
     }
 
@@ -64,6 +68,7 @@ public class GameService {
         game.setPlayerTwo(account);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
+        messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
         return game;
     }
 
@@ -89,9 +94,18 @@ public class GameService {
 
         if (xWinner) {
             game.setWinner(TicTacToe.X);
+            game.getPlayerOne().incrementMedals(10);
+            game.getPlayerTwo().decrementMedals(1);
             game.setStatus(GameStatus.FINISHED);
         } else if (oWinner) {
             game.setWinner(TicTacToe.O);
+            game.getPlayerTwo().incrementMedals(10);
+            game.getPlayerOne().decrementMedals(1);
+            game.setStatus(GameStatus.FINISHED);
+        } else if (checkTie(gameBoard)) {
+            game.setWinner(TicTacToe.TIE);
+            game.getPlayerOne().incrementMedals(5);
+            game.getPlayerTwo().incrementMedals(5);
             game.setStatus(GameStatus.FINISHED);
         }
 
@@ -104,6 +118,9 @@ public class GameService {
         game.setGameBoard(transGameBoardToString(gameBoard));
         gameRepository.save(game);
         messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
+        if (game.getStatus() == GameStatus.FINISHED) {
+            gameRepository.delete(game);
+        }
     }
 
     private Boolean checkWinner(Integer[][] gameBoard, TicTacToe ticTacToe) {
@@ -131,11 +148,57 @@ public class GameService {
         return false;
     }
 
+    private Boolean checkTie(Integer[][] gameBoard) {
+        for (int i = 0; i < gameBoard.length; i++) {
+            for (int j = 0; j < gameBoard.length; j++) {
+                if (gameBoard[i][j] == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void leaveGame(Account account) {
+        Game game = findByUser(account);
+        if (game.getStatus() == GameStatus.IN_PROGRESS) {
+            if (game.getPlayerOne() == account) {
+                game.setWinner(TicTacToe.O);
+                game.getPlayerTwo().incrementMedals(10);
+                game.getPlayerOne().decrementMedals(1);
+                game.setStatus(GameStatus.FINISHED);
+            } else {
+                game.setWinner(TicTacToe.X);
+                game.getPlayerOne().incrementMedals(10);
+                game.getPlayerTwo().decrementMedals(1);
+                game.setStatus(GameStatus.FINISHED);
+            }
+            gameRepository.save(game);
+            messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
+            gameRepository.delete(game);
+        }
+        if (game.getStatus() == GameStatus.NEW) {
+            game.setStatus(GameStatus.FINISHED);
+            messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
+            gameRepository.delete(game);
+        }
+    }
+
     public Game findByUser(Account account) {
          return gameRepository.findAll().stream()
                  .filter(game -> game.getPlayerOne().equals(account) || game.getPlayerTwo().equals(account))
                  .toList()
                  .getFirst();
+    }
+
+    public Boolean IsUserInGame(Account account) {
+        Optional<Game> game = gameRepository.findByPlayerOneOrPlayerTwo(account, account);
+
+        if (game.isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public Game findById(Long gameId) {

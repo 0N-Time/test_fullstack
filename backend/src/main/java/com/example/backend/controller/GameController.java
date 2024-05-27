@@ -62,6 +62,26 @@ public class GameController {
         }
     }
 
+    @GetMapping("/game-reconnect")
+    public ResponseEntity<GameResponse> gameReconnect(@RequestHeader("Authorization") String authorizationHeader) {
+        Account account = getAccountFromToken(authorizationHeader);
+        Game game = gameService.findByUser(account);
+
+        return ResponseEntity.ok(new GameResponse(game));
+    }
+
+    @GetMapping("/game/check-for-game")
+    public ResponseEntity<Boolean> checkForGame(@RequestHeader("Authorization") String authorizationHeader) {
+        Account account = getAccountFromToken(authorizationHeader);
+        return ResponseEntity.ok(gameService.IsUserInGame(account));
+    }
+
+    @PostMapping("/game-surrender")
+    public void surrender(@RequestHeader("Authorization") String authorizationHeader) {
+        Account account = getAccountFromToken(authorizationHeader);
+        gameService.leaveGame(account);
+    }
+
     private Account getAccountFromToken(String authorizationHeader) {
         String token = authorizationHeader.substring(7);
         String username = jwtService.extractUsername(token);

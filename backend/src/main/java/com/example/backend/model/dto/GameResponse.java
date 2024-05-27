@@ -10,6 +10,8 @@ public class GameResponse {
     public String gameBoard;
     public TicTacToe winner;
     public TicTacToe currentPlayerTurn;
+    public String playerX;
+    public String playerO;
 
     public GameResponse (Game game) {
         id = game.getId();
@@ -17,5 +19,11 @@ public class GameResponse {
         gameBoard = game.getGameBoard();
         winner = game.getWinner();
         currentPlayerTurn = game.getCurrentPlayerTurn();
+        if (game.getPlayerOne() != null) {
+            playerX = game.getPlayerOne().getName();
+        }
+        if (game.getPlayerTwo() != null) {
+            playerO = game.getPlayerTwo().getName();
+        }
     }
 }

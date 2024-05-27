@@ -54,4 +54,12 @@ public class Account implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void incrementMedals(int increment) {
+        medals += increment;
+    }
+
+    public void decrementMedals(int decrement) {
+        medals -= decrement;
+    }
 }
