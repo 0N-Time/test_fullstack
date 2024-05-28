@@ -8,14 +8,17 @@ function UserHome() {
     const [medals, setMedals] = useState("");
 
     const handleButtonSettings = () => {
-        navigate("/user-home/settings")
+        navigate("/user-home/settings");
     }
     const handleButtonLogout = () => {
         logout();
         navigate("/login");
     };
     const handleButtonTicTacToe = () => {
-        navigate("/user-home/tic-tac-toe")
+        navigate("/user-home/tic-tac-toe");
+    }
+    const handleButtonShop = () => {
+        navigate("/user-home/shop");
     }
 
     useEffect(() => {
@@ -53,6 +56,7 @@ function UserHome() {
             <button onClick={handleButtonTicTacToe}>TicTacToe</button>
             <button onClick={handleButtonSettings}>Settings</button>
             <button onClick={handleButtonLogout}>Logout</button>
+            <button onClick={handleButtonShop}>Shop</button>
         </div>
     );
 }

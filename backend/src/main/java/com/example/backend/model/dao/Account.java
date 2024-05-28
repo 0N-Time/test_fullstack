@@ -9,14 +9,18 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "account")
 public class Account implements UserDetails {
 
     @Id
@@ -25,10 +29,19 @@ public class Account implements UserDetails {
     private String username;
     private String password;
     private String name;
-    private Long medals;
+    private BigDecimal medals;
+    private String equippedColor;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "account_color",
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "color_id", referencedColumnName = "id")
+    )
+    private Set<Color> colors = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -56,10 +69,10 @@ public class Account implements UserDetails {
     }
 
     public void incrementMedals(int increment) {
-        medals += increment;
+        this.medals = this.medals.add(BigDecimal.valueOf(increment));
     }
 
     public void decrementMedals(int decrement) {
-        medals -= decrement;
+        medals = medals.subtract(BigDecimal.valueOf(decrement));
     }
 }

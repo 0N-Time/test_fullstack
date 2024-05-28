@@ -12,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -35,7 +37,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .role(Role.USER)
-                .medals(0L)
+                .medals(BigDecimal.valueOf(0))
                 .build();
         repository.save(account);
         var jwtToken = jwtService.generateToken(account);

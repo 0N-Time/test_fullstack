@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -28,7 +29,7 @@ public class AccountService {
         throw new NotFoundException("User not found");
     }
 
-    public ResponseEntity<Long> getAccountMedals(String username) {
+    public ResponseEntity<BigDecimal> getAccountMedals(String username) {
         Optional<Account> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get().getMedals());
