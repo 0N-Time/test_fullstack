@@ -1,12 +1,60 @@
-.html {
-    background-color: red;
+body {
+    margin: 0;
 }
 
-.bouncing-logo {
-    background-image: url('src/assets/CoopLogo.png');
+.home-page {
+    overflow: hidden;
+    font-family: Coop;
+    z-index: 2;
+    background-image: url("../../assets/homepage/Homepage_Background.png");
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 50%;
-    position: absolute;
-    animation: bounce 10s infinite;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
 }
+
+.home-page span {
+    font-size: 84px;
+    margin-bottom: 20px;
+    background: -webkit-linear-gradient(#ff5404, #ff8605);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.home-page-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(0, 86, 179, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.home-page-login-button {
+    padding: 15px 120px;
+    font-size: 24px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.home-page-login-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Medium Devices */
+
+/* Small Devices */

@@ -37,10 +37,10 @@ public class GameController {
     }
 
     @PostMapping("/connect/{id}")
-    public ResponseEntity<Game> connect(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id) throws InvalidParamException, InvalidGameException {
+    public ResponseEntity<GameResponse> connect(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id) throws InvalidParamException, InvalidGameException {
         Account account = getAccountFromToken(authorizationHeader);
         Game game = gameService.connectToGame(account, id);
-        return ResponseEntity.ok(game);
+        return ResponseEntity.ok(new GameResponse(game));
     }
 
     @PostMapping("/connect/random")

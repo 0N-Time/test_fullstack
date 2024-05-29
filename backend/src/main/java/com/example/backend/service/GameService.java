@@ -52,6 +52,9 @@ public class GameService {
         if (game.getStatus().equals(GameStatus.IN_PROGRESS)) {
             throw new InvalidGameException("Game is already in progress");
         }
+        if (game.getPlayerOne() == account) {
+            throw new InvalidGameException("You can't join your own game");
+        }
         game.setPlayerTwo(account);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
@@ -64,6 +67,7 @@ public class GameService {
                 .findAll()
                 .stream()
                 .filter(it -> it.getStatus().equals(GameStatus.NEW))
+                .filter(it -> !it.getPlayerOne().equals(account))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("No new games found"));
         game.setPlayerTwo(account);

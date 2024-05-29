@@ -11,7 +11,9 @@ public class GameResponse {
     public TicTacToe winner;
     public TicTacToe currentPlayerTurn;
     public String playerX;
+    public String playerXColor;
     public String playerO;
+    public String playerOColor;
 
     public GameResponse (Game game) {
         id = game.getId();
@@ -21,9 +23,11 @@ public class GameResponse {
         currentPlayerTurn = game.getCurrentPlayerTurn();
         if (game.getPlayerOne() != null) {
             playerX = game.getPlayerOne().getName();
+            playerXColor = game.getPlayerOne().getEquippedColor();
         }
         if (game.getPlayerTwo() != null) {
             playerO = game.getPlayerTwo().getName();
+            playerOColor = game.getPlayerTwo().getEquippedColor();
         }
     }
 }

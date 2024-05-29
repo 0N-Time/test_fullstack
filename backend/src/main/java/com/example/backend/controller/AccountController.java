@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.model.dao.Account;
 import com.example.backend.model.dto.Token;
+import com.example.backend.model.dto.UserResponse;
 import com.example.backend.service.JwtService;
 import com.example.backend.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +19,11 @@ public class AccountController {
     private final AccountService accountService;
     private final JwtService jwtService;
 
-    @GetMapping("/get-name")
-    public ResponseEntity<?> getUserName(@RequestHeader("Authorization") String authorizationHeader) {
+    @GetMapping("/get/user")
+    public ResponseEntity<UserResponse> getUser(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(7);
         String username = jwtService.extractUsername(token);
-        return accountService.getAccountName(username);
-    }
-
-    @GetMapping("/get-medals")
-    public ResponseEntity<?> getMedals(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.substring(7);
-        String username = jwtService.extractUsername(token);
-        return accountService.getAccountMedals(username);
+        return ResponseEntity.ok(accountService.getAccount(username));
     }
 
     @PutMapping("/update")

@@ -15,9 +15,16 @@ public class ColorInitializer implements ApplicationRunner {
 
     private final ColorRepository colorRepository;
 
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         if (colorRepository.count() == 0) {
+            Color white = new Color();
+            white.setColorName("White");
+            white.setColorCode("#FFFFFF");
+            white.setPrice(new BigDecimal("0"));
+            colorRepository.save(white);
+
             Color yellow = new Color();
             yellow.setColorName("Yellow");
             yellow.setColorCode("#FFFF00");

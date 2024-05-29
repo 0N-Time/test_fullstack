@@ -1,4 +1,5 @@
 import {useNavigate} from "react-router-dom";
+import './HomePage.css';
 
 function HomePage() {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ function HomePage() {
     }
 
     return <div className="home-page">
-        <span>Test</span>
+        <span>Arcoop</span>
         <div className="home-page-button-container">
             <button className="home-page-login-button" onClick={handleLoginClick}>Login</button>
             <button className="home-page-login-button" onClick={handleRegisterClick}>Register</button>

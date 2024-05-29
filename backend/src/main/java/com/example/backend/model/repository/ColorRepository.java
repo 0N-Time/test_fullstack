@@ -12,6 +12,10 @@ import java.util.Set;
 
 public interface ColorRepository extends JpaRepository<Color, Integer> {
     Optional<Color> findById(Long id);
+
     @Query(value = "SELECT c FROM Color c JOIN c.owners a WHERE a.id = :accountId")
     List<Color> findColorsByAccountId(@Param("accountId") Integer accountId);
+
+    @Query(value = "SELECT c FROM Color c WHERE c.colorName = :colorName")
+    Optional<Color> findColorByName(@Param("colorName") String colorName);
 }

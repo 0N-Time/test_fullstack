@@ -79,7 +79,7 @@ function settings() {
         }
     }
 
-    return <div className="settings">
+    return <div className="settings-page">
         <Button className="change-account-button" onClick={handleShowAccountModal}>Change account information</Button>
 
         <Modal className="modal-account" show={showAccountModal} onHide={handleCloseAccountModal}>

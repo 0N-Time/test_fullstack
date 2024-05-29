@@ -14,10 +14,7 @@ function App() {
 
   return (
     <div className="App">
-        <BouncingLogo></BouncingLogo>
-
         <Routes>
-
             <Route path={"/"} element={<HomePage/>}/>
 
             <Route path={"/login"} element={<LoginPage/>}/>

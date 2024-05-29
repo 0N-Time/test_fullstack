@@ -25,14 +25,21 @@ public class ShopController {
     private final AccountService accountService;
 
     @GetMapping("/colors")
-    public ResponseEntity<List<ColorResponse>> getAvailableColors() {
-        return ResponseEntity.of(Optional.ofNullable(shopService.getAvailableColors()));
+    public ResponseEntity<List<ColorResponse>> getAvailableColors(@RequestHeader("Authorization") String authorizationHeader) {
+        Account account = getAccountFromToken(authorizationHeader);
+        return ResponseEntity.of(Optional.ofNullable(shopService.getAvailableColors(account)));
     }
 
     @PostMapping("/colors/buy")
-    public ResponseEntity<ColorResponse> buyColor(@RequestHeader("Authorization") String authorizationHeader, @RequestBody ColorResponse colorResponse) throws InstantiationException {
+    public ResponseEntity<ColorResponse> buyColor(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Long colorId) throws InstantiationException {
         Account account = getAccountFromToken(authorizationHeader);
-        return ResponseEntity.ok(new ColorResponse(shopService.buyColor(account, colorResponse)));
+        return ResponseEntity.ok(new ColorResponse(shopService.buyColor(account, colorId), account));
+    }
+
+    @PostMapping("/colors/equip")
+    public ResponseEntity<ColorResponse> equipColor(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Long colorId) throws InstantiationException {
+        Account account = getAccountFromToken(authorizationHeader);
+        return ResponseEntity.ok(new ColorResponse(shopService.equipColor(account, colorId), account));
     }
 
     private Account getAccountFromToken(String authorizationHeader) {

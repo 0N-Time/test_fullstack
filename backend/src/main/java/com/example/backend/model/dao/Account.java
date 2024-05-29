@@ -1,5 +1,7 @@
 package com.example.backend.model.dao;
 
+import com.example.backend.Initialization.ColorInitializer;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
