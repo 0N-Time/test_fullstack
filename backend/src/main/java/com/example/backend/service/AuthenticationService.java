@@ -11,6 +11,7 @@ import com.example.backend.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,7 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .medals(BigDecimal.valueOf(0))
                 .equippedColor("#FFFFFF")
+                .uuid(BCrypt.hashpw(request.getUsername(), BCrypt.gensalt()).substring(0, 6))
                 .colors(Set.of(defaultColor))
                 .build();
         repository.save(account);

@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.model.dao.Chat;
 import com.example.backend.model.dto.GameResponse;
 import com.example.backend.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -17,4 +18,10 @@ public class WebSocketController {
     public GameResponse game(@DestinationVariable("id") Long id) {
         return new GameResponse(gameService.findById(id));
     }
+    /*
+    @MessageMapping("/chat/{id}")
+    @SendTo("topic/chat/{id}")
+    public Chat chat() {
+
+    }*/
 }

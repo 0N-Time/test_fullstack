@@ -33,6 +33,7 @@ public class Account implements UserDetails {
     private String name;
     private BigDecimal medals;
     private String equippedColor;
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -44,6 +45,14 @@ public class Account implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "color_id", referencedColumnName = "id")
     )
     private Set<Color> colors = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "account_chats",
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "color_id", referencedColumnName = "id")
+    )
+    private Set<Chat> chats = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
