@@ -1,5 +1,5 @@
 import './Shop.css';
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 type Color = {
     id: number,
@@ -9,7 +9,6 @@ type Color = {
     owned?: boolean,
     equipped?: boolean
 }
-
 
 function Shop() {
     const [shopColors, setShopColors] = useState<Color[]>([]);
@@ -26,7 +25,7 @@ function Shop() {
             const data = await response.json();
             console.log(data);
             setShopColors(data);
-            };
+        };
         fetchData();
     }, []);
 
@@ -45,7 +44,7 @@ function Shop() {
                 console.log("Color bought successfully!");
                 setShopColors((prevColors) =>
                     prevColors.map((color) =>
-                        color.id === colorId? {...color, owned: true} : color
+                        color.id === colorId ? { ...color, owned: true } : color
                     )
                 );
             } else {
@@ -71,38 +70,33 @@ function Shop() {
                 console.log("Color equipped successfully");
                 setShopColors((prevColors) =>
                     prevColors.map((color) =>
-                        color.id === colorId? {...color, owned: true, equipped: true } : {...color, equipped: false}
-                    )
-                );
-                setShopColors((prevColors) =>
-                    prevColors.map((color) =>
-                        color.equipped? {...color, equipped: true } : {...color, equipped: false }
+                        color.id === colorId ? { ...color, owned: true, equipped: true } : { ...color, equipped: false }
                     )
                 );
             } else {
-                console.error("Error equipping color:", response.status)
+                console.error("Error equipping color:", response.status);
             }
         } catch (error) {
             console.error("Error equipping color:", error);
         }
     };
 
-
-
     return (
-        <div className="shop">
-            {shopColors.map((color) => (
-                <div key={color.id} className="color-item">
-                    <div className="color-code" style={{color: color.colorCode}}></div>
-                    <div className="color-name" style={{color: color.colorCode}}>{color.colorName}</div>
-                    <div className="color-price">{color.price}</div>
-                    {color.owned ? (
-                        <button className="equip-button" disabled={color.equipped} onClick={() => handleEquip(color.id)}>Equip</button>
-                    ) : (
-                        <button className="buy-button" onClick={() => handleBuy(color.id)}>Buy</button>
-                    )}
-                </div>
-            ))}
+        <div className="shop-container">
+            <div className="shop-content">
+                {shopColors.map((color) => (
+                    <div key={color.id} className={`color-item ${color.equipped ? 'equipped' : ''}`}>
+                        <div className="color-code" style={{ color: color.colorCode }}>■</div>
+                        <div className="color-name" style={{ color: color.colorCode }}>{color.colorName}</div>
+                        <div className="color-price">{color.price}</div>
+                        {color.owned ? (
+                            <button className="equip-button" disabled={color.equipped} onClick={() => handleEquip(color.id)}>Equip</button>
+                        ) : (
+                            <button className="buy-button" onClick={() => handleBuy(color.id)}>Buy</button>
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

@@ -23,7 +23,7 @@ const TicTacToe = () => {
     const [gameId, setGameId] = useState<number>(0);
     const [gameInProgress, setGameInProgress] = useState<boolean>(false);
     const [game, setGame] = useState<Game>({gameBoard: "000000000", id: 0, status: "NEW", winner: null , currentPlayerTurn: undefined, playerX: "Searching...", playerXColor: "#FFFFFF", playerO: "Searching...", playerOColor: "#FFFFFF"});
-    const [client] = useState( new Client({
+    const [client] = useState(new Client({
         brokerURL: "ws://localhost:8080/ws",
         debug: function (str: string) {
             console.log(str);
@@ -61,7 +61,7 @@ const TicTacToe = () => {
         return () => {
             client.deactivate();
         };
-    }, []);
+    }, [client]);
 
     if (game.id) {
         console.log(game.id)
@@ -179,32 +179,32 @@ const TicTacToe = () => {
     }
 
     const renderBoard = (game: Game) => {
-            return (
+        return (
+            <div>
                 <div>
-                    <div>
-                        {game.currentPlayerTurn} turn
-                    </div>
-                    <div id="board" className="table table-bordered">
-                        {game.gameBoard.split("").map((cell, index) => (
-                            <div key={index} className="cell" onClick={() => {
-                                const row = Math.floor(index / 3);
-                                const col = index % 3;
-                                handleCellClick(row, col);
-                            }}>
-                                {cell === "0"? "" : (
-                                    <div style={{ color: cell === "1"? game.playerXColor : game.playerOColor }}>
-                                        {cell === "1"? "X" : "O"}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                    {game.currentPlayerTurn} turn
                 </div>
-            );
+                <div id="board" className="table">
+                    {game.gameBoard.split("").map((cell, index) => (
+                        <div key={index} className="cell" onClick={() => {
+                            const row = Math.floor(index / 3);
+                            const col = index % 3;
+                            handleCellClick(row, col);
+                        }}>
+                            {cell === "0" ? "" : (
+                                <div style={{ color: cell === "1" ? game.playerXColor : game.playerOColor }}>
+                                    {cell === "1" ? "X" : "O"}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     };
 
     const renderSurrenderButton = (game: Game) => {
-        if (game.id && game.status != "FINISHED") {
+        if (game.id && game.status !== "FINISHED") {
             return (
                 <div className="button-container">
                     <button onClick={handleSubmitSurrender}>
@@ -221,14 +221,14 @@ const TicTacToe = () => {
         }
         if (game.winner === "TIE") {
             return (
-                <div className="alert alert-info">
-                    <span>Its a tie!</span>
+                <div className="alert">
+                    <span>It's a tie!</span>
                 </div>
             );
         } else {
             return (
-                <div className="alert alert-info">
-                {game.winner === "X" ? "Player X" : "Player O"} wins!
+                <div className="alert">
+                    {game.winner === "X" ? "Player X" : "Player O"} wins!
                 </div>
             );
         }
@@ -237,11 +237,11 @@ const TicTacToe = () => {
     const render = () => {
         if (!game.id && gameInProgress) {
             return (
-                <div>
-                    <button onClick={handleLeaveGameWhileReconnecting} className="btn btn-leave-game">
+                <div className="button-container">
+                    <button onClick={handleLeaveGameWhileReconnecting} className="btn">
                         Leave Game
                     </button>
-                    <button onClick={handleSubmitReconnect} className="btn btn-reconnect-game">
+                    <button onClick={handleSubmitReconnect} className="btn">
                         Reconnect
                     </button>
                 </div>
@@ -249,11 +249,11 @@ const TicTacToe = () => {
         }
         if (!game.id) {
             return (
-                <div>
-                    <button onClick={handleSubmitCreateGame} className="btn btn-create-game">
+                <div className="button-container">
+                    <button onClick={handleSubmitCreateGame} className="btn">
                         New Game
                     </button>
-                    <form onSubmit={handleSubmitJoinGame}>
+                    <form onSubmit={handleSubmitJoinGame} className="form-container">
                         <label htmlFor="gameId">Game ID:</label>
                         <input
                             type="number"
@@ -261,20 +261,17 @@ const TicTacToe = () => {
                             value={gameId}
                             onChange={(event) => setGameId(event.target.valueAsNumber)}
                         />
-                        <button type="submit">Join Game</button>
+                        <button type="submit" className="btn">Join Game</button>
                     </form>
-                    <button onClick={handleSubmitJoinRandomGame} className="btn btn-join-random-game">
-                        Join Random Game
+                    <button onClick={handleSubmitJoinRandomGame} className="btn">
+                        Random Game
                     </button>
                 </div>
             );
         }
-        if (!game.id) {
-            return <div>Loading...</div>;
-        }
-        if (game.status == "FINISHED") {
+        if (game.status === "FINISHED") {
             {
-                handleResetGame(250)
+                handleResetGame(850)
             }
         }
         return (
@@ -299,7 +296,7 @@ const TicTacToe = () => {
         );
     };
 
-    return <div>{render()}</div>;
+    return <div className="tic-tac-toe-container">{render()}</div>;
 };
 
 export default TicTacToe;

@@ -1,4 +1,4 @@
-package com.example.backend.controller;
+/*package com.example.backend.controller;
 
 import com.example.backend.Exception.NotFoundException;
 import com.example.backend.model.dao.Account;
@@ -23,4 +23,4 @@ public class ChatController {
     public ResponseEntity<> addFriend(@RequestHeader("Authorization") String authorizationHeader, @RequestBody String uuid)  {
         fwiendService.addFwiend(fwiendService.getAccountFromToken(authorizationHeader), fwiendService.getAccountFromUuid(uuid));
     }
-}
+}*/
