@@ -8,7 +8,6 @@ import Settings from "./containers/settings/Settings.tsx";
 import TicTacToe from "./containers/tictactoe/TicTacToe.tsx";
 import Shop from "./containers/shop/Shop.tsx";
 import {ProtectedRoute} from "./components/ProtectedRoute.tsx";
-import BouncingLogo from './components/BouncingLogo.tsx';
 
 function App() {
 
