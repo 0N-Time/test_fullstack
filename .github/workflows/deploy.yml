@@ -66,7 +66,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: app.jar
-          path: backend/target/app.jar # muss mit finalName in der pom.xml übereinstimmen
+          path: backend/target/app.jar # Dies entspricht dem finalName in der pom.xml
 
   zu-docker-hub-hochladen:
     runs-on: ubuntu-latest
@@ -77,7 +77,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: app.jar
-          path: backend/target/app.jar
+          path: backend/target
 
       - name: Debug downloaded artifact
         run: ls -la backend/target
