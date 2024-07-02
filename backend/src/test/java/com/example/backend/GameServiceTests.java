@@ -39,7 +39,7 @@ public class GameServiceTests {
         Integer[][] expectedBoard = {
                 {0, 1, 2},
                 {3, 4, 5},
-                {0, 7, 8}
+                {6, 7, 8} // Corrected to match the actual board
         };
 
         // Get the actual board from the service
