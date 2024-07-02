@@ -77,7 +77,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: app.jar
-          path: backend/target
+          path: backend/target/app.jar
 
       - name: Debug downloaded artifact
         run: ls -la backend/target
@@ -106,3 +106,4 @@ jobs:
       - name: Render.com-Bereitstellung auslösen
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY }}
+        # muss mit der URL des Render-Deployments übereinstimmen
