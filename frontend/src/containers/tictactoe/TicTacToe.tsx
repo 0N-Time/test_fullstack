@@ -24,7 +24,7 @@ const TicTacToe = () => {
     const [gameInProgress, setGameInProgress] = useState<boolean>(false);
     const [game, setGame] = useState<Game>({gameBoard: "000000000", id: null, status: "NEW", winner: null , currentPlayerTurn: undefined, playerX: "Searching...", playerXColor: "#FFFFFF", playerO: "Searching...", playerOColor: "#FFFFFF"});
     const [client] = useState(new Client({
-        brokerURL: "ws://localhost:8080/ws",
+        brokerURL: "wss://arcoop.onrender.com/ws",
         debug: function (str: string) {
             console.log(str);
         },
