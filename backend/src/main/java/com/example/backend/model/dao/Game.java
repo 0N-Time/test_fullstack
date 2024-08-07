@@ -18,6 +18,7 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String uid;
     private GameStatus status;
     private String gameBoard;
     private TicTacToe winner;

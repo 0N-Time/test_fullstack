@@ -8,8 +8,38 @@ function RegisterPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const validatePassword = (password: string) => {
+        let upperCaseFlag = false;
+        let lowerCaseFlag = false;
+        let numberFlag = false;
+        let specialCharacterFlag = false;
+        let lengthIsOverOr6Flag = password.length >= 6;
+
+        for (let i = 0; i < password.length; i++) {
+            const ch = password.charAt(i);
+            if (/[a-z]/.test(ch)) {
+                lowerCaseFlag = true;
+            }
+            if (/[A-Z]/.test(ch)) {
+                upperCaseFlag = true;
+            }
+            if (/[0-9]/.test(ch)) {
+                numberFlag = true;
+            }
+            if (/[^a-zA-Z0-9]/.test(ch)) {
+                specialCharacterFlag = true;
+            }
+        }
+
+        return upperCaseFlag && lowerCaseFlag && numberFlag && specialCharacterFlag && lengthIsOverOr6Flag
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        if (!validatePassword(password)) {
+            alert("Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 6 characters long.");
+        }
 
         const response = await fetch("/api/auth/register", {
             method: "POST",

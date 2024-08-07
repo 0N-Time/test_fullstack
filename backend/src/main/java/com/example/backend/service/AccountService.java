@@ -4,13 +4,12 @@ import com.example.backend.controller.UpdateUserRequest;
 import com.example.backend.model.dao.Account;
 import com.example.backend.Exception.NotFoundException;
 import com.example.backend.model.dto.UserResponse;
+import com.example.backend.model.repository.GameRepository;
 import com.example.backend.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -18,9 +17,12 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public class AccountService {
 
+    private final AuthenticationService authenticationService;
+    private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final Predicate<String> stringCheck = (stringVal) -> stringVal != null && !stringVal.isBlank();
+    private final GameService gameService;
 
     public UserResponse getAccount(String username) {
         Optional<Account> user = userRepository.findByUsername(username);
@@ -44,7 +46,11 @@ public class AccountService {
         }
 
         if (stringCheck.test(request.getPassword())) {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            if (authenticationService.checkPasswordForCredentials(request.getPassword())) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            } else if (request.getPassword().isEmpty()) {
+                
+            } else throw new RuntimeException("Missing Password credentials");
         }
 
         if (stringCheck.test(request.getName())) {
@@ -59,6 +65,10 @@ public class AccountService {
     }
 
     public void deleteUser(Integer userId) {
+        Account accountToDelete = userRepository.findById(userId).orElseThrow();
+        if (gameRepository.findByPlayerOneOrPlayerTwo(accountToDelete, accountToDelete).isPresent()) {
+            gameService.leaveGame(accountToDelete);
+        }
         userRepository.deleteById(userId);
     }
 

@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.Exception.NotFoundException;
 import com.example.backend.model.dao.Account;
 import com.example.backend.model.dao.Chat;
+import com.example.backend.model.repository.ChatRepository;
 import com.example.backend.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,17 @@ public class FwiendService {
     private final JwtService jwtService;
     private final AccountService accountService;
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
-    public void addFwiend(Account requester, Account receiver) {
+    public Account addFwiend(Account requester, Account receiver) {
+        if (requester != receiver) {
+
+        }
         Chat chat = new Chat();
         chat.getAccount().add(receiver);
-        requester.getChats().add(chat);
+        chat.getAccount().add(requester);
+        chatRepository.save(chat);
+        return receiver;
     }
 
     public Account getAccountFromUuid(String uuid) {

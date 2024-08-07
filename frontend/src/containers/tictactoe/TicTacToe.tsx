@@ -8,7 +8,7 @@ type Move = {
 }
 
 type Game = {
-    id: number
+    id: string | null
     status: "NEW" | "IN_PROGRESS" | "FINISHED"
     gameBoard: string
     winner: "X" | "O" | "TIE" | null
@@ -20,9 +20,9 @@ type Game = {
 }
 
 const TicTacToe = () => {
-    const [gameId, setGameId] = useState<number>(0);
+    const [gameId, setGameId] = useState<string>();
     const [gameInProgress, setGameInProgress] = useState<boolean>(false);
-    const [game, setGame] = useState<Game>({gameBoard: "000000000", id: 0, status: "NEW", winner: null , currentPlayerTurn: undefined, playerX: "Searching...", playerXColor: "#FFFFFF", playerO: "Searching...", playerOColor: "#FFFFFF"});
+    const [game, setGame] = useState<Game>({gameBoard: "000000000", id: null, status: "NEW", winner: null , currentPlayerTurn: undefined, playerX: "Searching...", playerXColor: "#FFFFFF", playerO: "Searching...", playerOColor: "#FFFFFF"});
     const [client] = useState(new Client({
         brokerURL: "ws://localhost:8080/ws",
         debug: function (str: string) {
@@ -148,7 +148,7 @@ const TicTacToe = () => {
 
     const handleResetGame = (time: number) => {
         setTimeout(() => {
-            setGame({gameBoard: "000000000", id: 0, status: "NEW", winner: null , currentPlayerTurn: undefined, playerX: "Searching...", playerXColor: "#FFFFFF", playerO: "Searching...", playerOColor: "#FFFFFF"})
+            setGame({gameBoard: "000000000", id: null, status: "NEW", winner: null , currentPlayerTurn: undefined, playerX: "Searching...", playerXColor: "#FFFFFF", playerO: "Searching...", playerOColor: "#FFFFFF"})
             setGameInProgress(false);
         }, time);
     };
@@ -256,10 +256,10 @@ const TicTacToe = () => {
                     <form onSubmit={handleSubmitJoinGame} className="form-container">
                         <label htmlFor="gameId">Game ID:</label>
                         <input
-                            type="number"
+                            type="text"
                             id="gameId"
                             value={gameId}
-                            onChange={(event) => setGameId(event.target.valueAsNumber)}
+                            onChange={(event) => setGameId(event.target.value)}
                         />
                         <button type="submit" className="btn">Join Game</button>
                     </form>

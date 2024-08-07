@@ -15,8 +15,6 @@ import com.example.backend.service.JwtService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,10 +34,10 @@ public class GameController {
         return ResponseEntity.ok(new GameResponse(game));
     }
 
-    @PostMapping("/connect/{id}")
-    public ResponseEntity<GameResponse> connect(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Long id) throws InvalidParamException, InvalidGameException {
+    @PostMapping("/connect/{uid}")
+    public ResponseEntity<GameResponse> connect(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String uid) throws InvalidParamException, InvalidGameException {
         Account account = getAccountFromToken(authorizationHeader);
-        Game game = gameService.connectToGame(account, id);
+        Game game = gameService.connectToGame(account, uid);
         return ResponseEntity.ok(new GameResponse(game));
     }
 
@@ -56,9 +54,9 @@ public class GameController {
         Game game = gameService.findByUser(account);
 
         if (game.getPlayerOne() == account) {
-            gameService.gameLoop(new GameLoop(TicTacToe.X, move.getCoordinateX(), move.getCoordinateY(), game.getId()));
+            gameService.gameLoop(new GameLoop(TicTacToe.X, move.getCoordinateX(), move.getCoordinateY(), game.getUid()));
         } else if (game.getPlayerTwo() == account) {
-            gameService.gameLoop(new GameLoop(TicTacToe.O, move.getCoordinateX(), move.getCoordinateY(), game.getId()));
+            gameService.gameLoop(new GameLoop(TicTacToe.O, move.getCoordinateX(), move.getCoordinateY(), game.getUid()));
         }
     }
 

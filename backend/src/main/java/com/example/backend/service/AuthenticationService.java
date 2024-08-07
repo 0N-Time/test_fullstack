@@ -16,8 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,12 +32,14 @@ public class AuthenticationService {
     private final ColorRepository colorRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
-
         if (repository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
         if (repository.existsByName(request.getName())) {
             throw new RuntimeException("Name already exists");
+        }
+        if (!checkPasswordForCredentials(request.getPassword())) {
+            throw new RuntimeException("Missing Password credentials");
         }
 
         Color defaultColor = colorRepository.findColorByName("White").orElseThrow();
@@ -47,7 +51,7 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .medals(BigDecimal.valueOf(0))
                 .equippedColor("#FFFFFF")
-                .uuid(BCrypt.hashpw(request.getUsername(), BCrypt.gensalt()).substring(0, 6))
+                .uuid(Base64.getUrlEncoder().encodeToString(UUID.randomUUID().toString().getBytes()).substring(0, 6).toUpperCase())
                 .colors(Set.of(defaultColor))
                 .build();
         repository.save(account);
@@ -70,5 +74,34 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public boolean checkPasswordForCredentials(String password) {
+        //Password Flags
+        boolean upperCaseFlag = false;
+        boolean lowercaseFlag = false;
+        boolean numberFlag = false;
+        boolean specialCharacterFlag = false;
+        if (password.length() < 6) {
+            return false;
+        }
+
+        for (int i = 0; i < password.length(); i++) {
+
+            char ch = password.charAt(i);
+            if (Character.isLowerCase(ch)) {
+                lowercaseFlag = true;
+            }
+            if (Character.isUpperCase(ch)) {
+                upperCaseFlag = true;
+            }
+            if (Character.isDigit(ch)) {
+                numberFlag = true;
+            }
+            if (!Character.isLetterOrDigit(ch)) {
+                specialCharacterFlag = true;
+            }
+        }
+        return (upperCaseFlag && lowercaseFlag && numberFlag && specialCharacterFlag);
     }
 }

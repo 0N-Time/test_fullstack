@@ -25,13 +25,13 @@ public class GameServiceTests {
 
     @Test
     public void testGetGameBoard() {
-        // Set up a game with a known game board string
+        // Set up a game with a known game board string and a UID
         Game game = new Game();
-        game.setId(1L);
+        game.setUid("ABC123");
         game.setGameBoard("012345678"); // example game board string
 
         // Mock the repository to return this game
-        when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
+        when(gameRepository.findByUid("ABC123")).thenReturn(Optional.of(game));
 
         // Set up the expected board
         Integer[][] expectedBoard = {
@@ -41,10 +41,9 @@ public class GameServiceTests {
         };
 
         // Get the actual board from the service
-        Integer[][] actualBoard = gameService.getGameBoard(1L);
+        Integer[][] actualBoard = gameService.getGameBoard("ABC123");
 
         // Assert that the actual board matches the expected board
         assertArrayEquals(expectedBoard, actualBoard);
     }
-
 }

@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Integer> {
 
-    Optional<Game> findById(Long id);
+    Optional<Game> findByUid(String uid);
     Optional<Game> findByPlayerOneOrPlayerTwo(Account account1, Account account2);
 }

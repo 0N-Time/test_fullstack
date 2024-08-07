@@ -13,10 +13,10 @@ public class WebSocketController {
 
     private final GameService gameService;
 
-    @MessageMapping("/game/{id}")
-    @SendTo("/topic/game/{id}")
-    public GameResponse game(@DestinationVariable("id") Long id) {
-        return new GameResponse(gameService.findById(id));
+    @MessageMapping("/game/{uid}")
+    @SendTo("/topic/game/{uid}")
+    public GameResponse game(@DestinationVariable("uid") String uid) {
+        return new GameResponse(gameService.findByUid(uid));
     }
     /*
     @MessageMapping("/chat/{id}")

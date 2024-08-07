@@ -5,7 +5,7 @@ import com.example.backend.model.dao.GameStatus;
 import com.example.backend.model.dao.TicTacToe;
 
 public class GameResponse {
-    public Long id;
+    public String id;
     public GameStatus status;
     public String gameBoard;
     public TicTacToe winner;
@@ -16,7 +16,7 @@ public class GameResponse {
     public String playerOColor;
 
     public GameResponse (Game game) {
-        id = game.getId();
+        id = game.getUid();
         status = game.getStatus();
         gameBoard = game.getGameBoard();
         winner = game.getWinner();

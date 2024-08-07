@@ -15,8 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +30,7 @@ public class GameService {
 
     public Game createGame(Account account) {
         Game game = new Game();
+        game.setUid(Base64.getUrlEncoder().encodeToString(UUID.randomUUID().toString().getBytes()).substring(0, 6).toUpperCase());
         game.setGameBoard("000000000");
         game.setPlayerOne(account);
         game.setStatus(GameStatus.NEW);
@@ -41,8 +43,8 @@ public class GameService {
         return game;
     }
 
-    public Game connectToGame(Account account, Long gameId) throws InvalidParamException, InvalidGameException {
-        Game game = gameRepository.findById(gameId).orElseThrow(() -> new InvalidParamException("Game with provided id doesn't exist"));
+    public Game connectToGame(Account account, String uid) throws InvalidParamException, InvalidGameException {
+        Game game = gameRepository.findByUid(uid).orElseThrow(() -> new InvalidParamException("Game with provided id doesn't exist"));
         if (game.getPlayerOne() == null) {
             throw new InvalidGameException("PlayerOne is not present");
         }
@@ -73,12 +75,12 @@ public class GameService {
         game.setPlayerTwo(account);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
-        messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
+        messagingTemplate.convertAndSend("/topic/game/" + game.getUid(), new GameResponse(game));
         return game;
     }
 
     public void gameLoop(GameLoop gameLoop) throws InvalidGameException {
-        Game game = gameRepository.findById(gameLoop.getGameId()).orElseThrow(() -> new NotFoundException("Game not found"));
+        Game game = gameRepository.findByUid(gameLoop.getGameUid()).orElseThrow(() -> new NotFoundException("Game not found"));
 
         if (game.getCurrentPlayerTurn() != gameLoop.getType()) {
             throw new InvalidGameException("Not your turn");
@@ -88,7 +90,7 @@ public class GameService {
             throw new InvalidGameException("Game is not in progress");
         }
 
-        Integer[][] gameBoard = getGameBoard(gameLoop.getGameId());
+        Integer[][] gameBoard = getGameBoard(gameLoop.getGameUid());
         if (gameBoard[gameLoop.getCoordinateX()][gameLoop.getCoordinateY()] == 1 || gameBoard[gameLoop.getCoordinateX()][gameLoop.getCoordinateY()] == 2) {
             throw new InvalidGameException("Invalid Input");
         }
@@ -122,7 +124,7 @@ public class GameService {
 
         game.setGameBoard(transGameBoardToString(gameBoard));
         gameRepository.save(game);
-        messagingTemplate.convertAndSend("/topic/game/" + game.getId(), new GameResponse(game));
+        messagingTemplate.convertAndSend("/topic/game/" + game.getUid(), new GameResponse(game));
         if (game.getStatus() == GameStatus.FINISHED) {
             gameRepository.delete(game);
         }
@@ -199,20 +201,16 @@ public class GameService {
     public Boolean IsUserInGame(Account account) {
         Optional<Game> game = gameRepository.findByPlayerOneOrPlayerTwo(account, account);
 
-        if (game.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return game.isPresent();
     }
 
-    public Game findById(Long gameId) {
-        return gameRepository.findById(gameId).orElseThrow();
+    public Game findByUid(String gameUid) {
+        return gameRepository.findByUid(gameUid).orElseThrow();
     }
 
 
-    public Integer[][] getGameBoard(Long id) {
-        Optional<Game> game = gameRepository.findById(id);
+    public Integer[][] getGameBoard(String Uid) {
+        Optional<Game> game = gameRepository.findByUid(Uid);
         Integer[][] gameBoard = null;
         if (game.isPresent()) {
             gameBoard = new Integer[3][3];
@@ -224,7 +222,7 @@ public class GameService {
                         gameBoard[i][j] = 0;
                     } else {
                         char charAtIndex = gameBoardString.charAt(index);
-                        Integer intValue = Integer.parseInt(String.valueOf(charAtIndex));
+                        int intValue = Integer.parseInt(String.valueOf(charAtIndex));
 
                         gameBoard[i][j] = intValue;
                     }

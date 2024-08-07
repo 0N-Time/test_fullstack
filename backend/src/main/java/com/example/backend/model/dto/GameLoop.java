@@ -12,5 +12,5 @@ public class GameLoop {
     private TicTacToe type;
     private Integer coordinateX;
     private Integer coordinateY;
-    private Long gameId;
+    private String gameUid;
 }
