@@ -1,6 +1,6 @@
 package com.example.backend.Initialization;
 
-import com.example.backend.model.dao.Color;
+/*import com.example.backend.model.dao.Color;
 import com.example.backend.model.repository.ColorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -45,3 +45,4 @@ public class ColorInitializer implements ApplicationRunner {
         }
     }
 }
+*/

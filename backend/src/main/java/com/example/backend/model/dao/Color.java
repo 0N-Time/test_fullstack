@@ -1,6 +1,6 @@
 package com.example.backend.model.dao;
 
-import com.example.backend.Initialization.ColorInitializer;
+//import com.example.backend.Initialization.ColorInitializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "color")
 @Data
-@EntityListeners(ColorInitializer.class)
+//@EntityListeners(ColorInitializer.class)
 public class Color {
 
     @Id
@@ -32,6 +32,6 @@ public class Color {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToMany(mappedBy = "colors")
+    @ManyToMany(mappedBy = "colors", fetch = FetchType.EAGER)
     private Set<Account> owners = new HashSet<>();
 }

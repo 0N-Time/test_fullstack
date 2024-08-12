@@ -38,9 +38,7 @@ public class DatabaseSeeder {
 
     @Transactional
     public void seedDatabase() {
-        if (colorRepository.count() == 0) {
-            seedColors();
-        }
+        seedColors();
         if (userRepository.count() == 0) {
             seedUsers();
         }
@@ -48,10 +46,12 @@ public class DatabaseSeeder {
 
     @Transactional
     public void seedColors() {
-        createAndSaveColor("White", "#FFFFFF", BigDecimal.ZERO);
-        createAndSaveColor("Yellow", "#FFFF00", BigDecimal.ZERO);
-        createAndSaveColor("Purple", "#800080", new BigDecimal("200"));
-        createAndSaveColor("Green", "#008000", new BigDecimal("300"));
+        if (colorRepository.count() == 0) {
+            createAndSaveColor("White", "#FFFFFF", BigDecimal.ZERO);
+            createAndSaveColor("Yellow", "#FFFF00", BigDecimal.ZERO);
+            createAndSaveColor("Purple", "#800080", new BigDecimal("200"));
+            createAndSaveColor("Green", "#008000", new BigDecimal("300"));
+        }
     }
 
     @Transactional
@@ -72,12 +72,20 @@ public class DatabaseSeeder {
     }
 
     private void saveAccount(String username, String rawPassword, String name, BigDecimal medals) {
+        // Ensure that the color "White" exists before trying to fetch it
         Optional<Color> optionalColor = colorRepository.findColorByName("White");
+        Color color;
         if (optionalColor.isEmpty()) {
-            throw new IllegalArgumentException("Color " + "White" + " not found");
+            // If not found, create and save the color
+            color = new Color();
+            color.setColorName("White");
+            color.setColorCode("#FFFFFF");
+            color.setPrice(BigDecimal.ZERO);
+            colorRepository.save(color);
+        } else {
+            color = optionalColor.get();
         }
 
-        Color color = optionalColor.get();
         var account = Account.builder()
                 .username(username)
                 .password(passwordEncoder.encode(rawPassword))
