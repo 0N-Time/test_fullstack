@@ -27,5 +27,8 @@ COPY --from=build /app/target/app.jar app.jar
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
+# Set the active Spring profile as an environment variable
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Run the JAR file
 ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","/app/app.jar"]
