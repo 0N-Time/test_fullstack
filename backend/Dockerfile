@@ -31,4 +31,4 @@ COPY src/main/resources/application-prod.properties /app/application-dev.propert
 EXPOSE 8080
 
 # Run the JAR file
-ENTRYPOINT ["java","-Dspring.profiles.active=dev","-jar","/app/app.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","/app/app.jar"]
