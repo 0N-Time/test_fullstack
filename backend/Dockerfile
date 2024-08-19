@@ -25,7 +25,7 @@ WORKDIR /app
 COPY --from=build /app/target/app.jar app.jar
 
 # Copy the production properties file
-COPY src/main/resources/application-prod.properties /app/application-dev.properties
+COPY src/main/resources/application-prod.properties /app/application-prod.properties
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
