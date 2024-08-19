@@ -58,7 +58,7 @@ jobs:
           cache: maven
 
       - name: Mit Maven bauen
-        run: mvn -B package --file backend/pom.xml -Dspring.profiles.active=dev
+        run: mvn -B package --file backend/pom.xml -Dspring.profiles.active=prod
 
       - name: Debug backend target directory
         run: ls -la backend/target/
