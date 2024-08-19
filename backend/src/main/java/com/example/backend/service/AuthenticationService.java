@@ -41,6 +41,9 @@ public class AuthenticationService {
         if (!checkPasswordForCredentials(request.getPassword())) {
             throw new RuntimeException("Missing Password credentials");
         }
+        if (!checkNameForCredentials(request.getName())) {
+            throw  new RuntimeException("Name must be not more than 16 characters");
+        }
 
         Color defaultColor = colorRepository.findColorByName("White").orElseThrow();
 
@@ -103,5 +106,9 @@ public class AuthenticationService {
             }
         }
         return (upperCaseFlag && lowercaseFlag && numberFlag && specialCharacterFlag);
+    }
+
+    public boolean checkNameForCredentials(String name) {
+        return (name.length() <= 16);
     }
 }

@@ -57,7 +57,7 @@ public class DatabaseSeeder {
     @Transactional
     public void seedUsers() {
         saveAccount("Shrek", ".Shrekinat0r", "xX_Shrek_Xx", BigDecimal.valueOf(999999));
-        saveAccount("Silvan", ".0nly_cool_if_he_gives_me_4_stars_in_my_praxischeck", "Silvan Kammermann", BigDecimal.valueOf(-1000));
+        saveAccount("Silvan", ".0nly_cool_if_he_gives_me_4_stars_in_my_praxischeck", "SilvanKammermann", BigDecimal.valueOf(-1000));
         saveAccount("Samira Tes(t)daten", ".Tes(t)daten1", "OwnerOfKitcord", BigDecimal.valueOf(0));
         saveAccount("Juanita", ".RucolaP4armesan", "Juacamole", BigDecimal.valueOf(0));
         saveAccount("Justin Schumacher", ".B3stMMA", "Giga Chad", BigDecimal.valueOf(9999999));

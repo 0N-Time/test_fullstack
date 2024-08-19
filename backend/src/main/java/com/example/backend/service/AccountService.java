@@ -48,13 +48,13 @@ public class AccountService {
         if (stringCheck.test(request.getPassword())) {
             if (authenticationService.checkPasswordForCredentials(request.getPassword())) {
                 user.setPassword(passwordEncoder.encode(request.getPassword()));
-            } else if (request.getPassword().isEmpty()) {
-                
-            } else throw new RuntimeException("Missing Password credentials");
+            }  else throw new RuntimeException("Missing Password credentials");
         }
 
         if (stringCheck.test(request.getName())) {
-            user.setName(request.getName());
+            if (authenticationService.checkNameForCredentials(request.getName())) {
+                user.setName(request.getName());
+            }  else throw new RuntimeException("Name must be not more than 16 characters");
         }
 
         return userRepository.save(user);
