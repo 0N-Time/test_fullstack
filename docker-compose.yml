@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # PostgreSQL container
+  postgres:
+    image: postgres:latest
+    container_name: backend-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: jwt_security
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"  # Expose port 5432 for DB access
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  # Spring Boot App container
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile  # Path to your Spring Boot Dockerfile
+    container_name: backend-app
+    depends_on:
+      - postgres  # Ensure PostgreSQL container starts first
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jwt_security
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_PROFILES_ACTIVE: dev
+    networks:
+      - backend-network
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-network:
