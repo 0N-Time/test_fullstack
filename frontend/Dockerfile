@@ -6,16 +6,19 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install ALL dependencies (including tsc)
+# Install everything — dependencies + devDependencies
 RUN npm install --include=dev
 
-# Add node_modules/.bin to PATH for tsc to work
+# Just to be safe: force install typescript manually
+RUN npm install typescript --save-dev
+
+# Add local bin to PATH for tsc and vite
 ENV PATH="./node_modules/.bin:$PATH"
 
-# Copy source code
+# Copy the source
 COPY . .
 
-# Run the build
+# Build
 RUN npm run build
 
 
