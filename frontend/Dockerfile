@@ -3,18 +3,17 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy only package files for better caching
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies, including devDependencies (for build tools like tsc, vite, etc.)
-RUN npm ci
+# Install ALL dependencies including devDependencies
+RUN npm ci --production=false  # 👈 This flag forces devDeps installation
 
 # Copy the rest of the app
 COPY . .
 
 # Build the application
 RUN npm run build
-
 
 # ---------- Stage 2: Serve with Nginx ----------
 FROM nginx:stable-alpine AS production
