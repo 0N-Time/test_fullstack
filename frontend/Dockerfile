@@ -3,19 +3,19 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy only package files for better caching
 COPY package*.json ./
 
-# Install everything — dependencies + devDependencies
+# Install all dependencies including devDependencies
 RUN npm install --include=dev
 
-# Just to be safe: force install typescript manually
+# Manually ensure typescript is installed
 RUN npm install typescript --save-dev
 
-# Add local bin to PATH for tsc and vite
+# Add tsc and vite to PATH
 ENV PATH="./node_modules/.bin:$PATH"
 
-# Copy the source
+# Copy the rest of the app
 COPY . .
 
 # Build
