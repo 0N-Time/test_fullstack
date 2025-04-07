@@ -1,19 +1,25 @@
+# ---------- Stage 1: Build React App ----------
 FROM node:20-slim AS builder
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
 
-ENV NODE_ENV=development
-RUN npm install
+# Install ALL dependencies (including tsc)
+RUN npm install --include=dev
 
-# Add local bin to PATH
+# Add node_modules/.bin to PATH for tsc to work
 ENV PATH="./node_modules/.bin:$PATH"
 
+# Copy source code
 COPY . .
 
+# Run the build
 RUN npm run build
 
+
+# ---------- Stage 2: Serve with Nginx ----------
 FROM nginx:stable-alpine AS production
 
 RUN rm -rf /usr/share/nginx/html/*
