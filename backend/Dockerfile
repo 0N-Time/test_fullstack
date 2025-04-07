@@ -1,34 +1,35 @@
-# Use the official OpenJDK image with Java 21 to build the app
+# Stage 1: Build the Spring Boot app
 FROM openjdk:21-jdk-slim AS build
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven
+# Install Maven, CA certs, and update Java truststore
+RUN apt-get update && \
+    apt-get install -y maven ca-certificates wget unzip && \
+    apt-get clean && \
+    update-ca-certificates
 
-# Set the working directory in the container
+# Set workdir
 WORKDIR /app
 
-# Copy the pom.xml and download dependencies
+# Copy pom and preload dependencies
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
-# Copy the source code and package the application to create the JAR file
+# Copy source
 COPY src ./src
+
+# Build jar
 RUN mvn clean package -DskipTests
 
-# Use the official OpenJDK image to run the app with Java 21
+# Stage 2: Runtime
 FROM openjdk:21-jdk-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/app.jar app.jar
+# Copy JAR
+COPY --from=build /app/target/*.jar app.jar
 
-# Make port 8080 available to the world outside this container
 EXPOSE 8080
 
-# Set the active Spring profile as an environment variable
 ENV SPRING_PROFILES_ACTIVE=dev
 
-# Run the JAR file
-ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

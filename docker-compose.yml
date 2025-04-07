@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"  # Expose port 5432 for DB access
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -20,11 +20,11 @@ services:
   # Spring Boot App container
   backend:
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile  # Path to your Spring Boot Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: backend-app
     depends_on:
-      - postgres  # Ensure PostgreSQL container starts first
+      - postgres
     ports:
       - "8080:8080"
     environment:
@@ -32,6 +32,19 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_PROFILES_ACTIVE: dev
+    networks:
+      - backend-network
+
+  # React Frontend container
+  frontend:
+    build:
+      context: ./frontend  # Path to your React app
+      dockerfile: Dockerfile  # Make sure this exists at ./frontend/Dockerfile
+    container_name: frontend-app
+    ports:
+      - "3000:80"  # nginx exposes on port 80 inside container
+    depends_on:
+      - backend
     networks:
       - backend-network
 
