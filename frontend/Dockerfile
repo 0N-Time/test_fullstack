@@ -3,16 +3,20 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# 1. First update npm to latest version
+RUN npm install -g npm@latest
 
-# Install ALL dependencies including devDependencies
-RUN npm ci --production=false  # 👈 This flag forces devDeps installation
+# 2. Copy package files with proper ownership
+COPY --chown=node:node package*.json ./
 
-# Copy the rest of the app
-COPY . .
+# 3. Install dependencies with clean cache
+RUN npm ci --include=dev --no-audit --prefer-offline
 
-# Build the application
+# 4. Copy application files with proper ownership
+COPY --chown=node:node . .
+
+# 5. Build with node user
+USER node
 RUN npm run build
 
 # ---------- Stage 2: Serve with Nginx ----------
