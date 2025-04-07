@@ -1,23 +1,19 @@
-# ---------- Stage 1: Build React App ----------
 FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# Copy package files first
 COPY package*.json ./
 
-# Install all deps including dev tools like tsc, vite
 ENV NODE_ENV=development
 RUN npm install
 
-# Copy the rest
+# Add local bin to PATH
+ENV PATH="./node_modules/.bin:$PATH"
+
 COPY . .
 
-# Build
 RUN npm run build
 
-
-# ---------- Stage 2: Serve via Nginx ----------
 FROM nginx:stable-alpine AS production
 
 RUN rm -rf /usr/share/nginx/html/*
